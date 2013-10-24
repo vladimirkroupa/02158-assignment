@@ -129,7 +129,7 @@ class Car extends Thread {
                 	
                 newpos = nextPos(curpos);
                 
-                if (alley.isAboutToEnter(no, newpos)) {
+                if (alley.isAboutToEnter(no, curpos)) {
                     cd.println("Car " + no + " is about to enter the alley.");
                     alley.enter(no);
                 } else if (alley.hasLeft(no, curpos)) {
@@ -173,7 +173,7 @@ public class CarControl implements CarControlI{
             gate[no] = new Gate();
             car[no] = new Car(no,cd,gate[no], alley);
             car[no].start();
-        } 
+        }
     }
 
     public boolean hasBridge() {

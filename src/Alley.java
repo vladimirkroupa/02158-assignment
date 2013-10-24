@@ -1,26 +1,30 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Alley {
 
     Semaphore sem = new Semaphore(1);
 
-    Pos alleyTop1 = new Pos(0, 0);
-    Pos alleyTop2 = new Pos(1, 1);
-
-    Pos alleyBottom1 = new Pos(9, 0);
-    Pos alleyBottom2 = new Pos(8, 1);
-
-    List<Pos> topPos;
-    List<Pos> bottomPos;
-
+    Map<Pos, List<Integer>> entries = new HashMap<>();
+    Map<Pos, List<Integer>> exits = new HashMap<>();
+    
     Alley() {
-        topPos = new ArrayList<Pos>();
-        topPos.add(alleyTop1);
-        topPos.add(alleyTop2);
-        bottomPos = new ArrayList<Pos>();
-        bottomPos.add(alleyBottom1);
-        bottomPos.add(alleyBottom2);
+    	addMapPosEntry(entries, new Pos(2, 1), 1, 2);
+    	addMapPosEntry(entries, new Pos(1, 2), 3, 4);
+    	addMapPosEntry(entries, new Pos(10, 0), 5, 6, 7, 8);
+    	
+    	addMapPosEntry(exits, new Pos(9, 1), 1, 2, 3, 4);
+    	addMapPosEntry(exits, new Pos(0, 1), 5, 6, 7, 8);
+    }
+    
+    private void addMapPosEntry(Map<Pos, List<Integer>> map, Pos pos, Integer... carNos) {
+    	List<Integer> carNoList = new ArrayList<>();
+    	for (Integer carNo : carNos) {
+    		carNoList.add(carNo);
+    	}
+    	map.put(pos, carNoList);
     }
 
     private boolean isGoingClockWise(int carNo) {
@@ -32,15 +36,13 @@ public class Alley {
     }
 
     public boolean isAboutToEnter(int carNo, Pos curCarPos) {
-        boolean fromBottom = bottomPos.contains(curCarPos) && isGoingClockWise(carNo);
-        boolean fromTop = topPos.contains(curCarPos) && isGoingCounterClockWise(carNo);
-        return fromBottom || fromTop;
+    	List<Integer> entriesForCar = this.entries.get(curCarPos);
+    	return entriesForCar != null && entriesForCar.contains(carNo);
     }
 
     public boolean hasLeft(int carNo, Pos curCarPos) {
-        boolean leavingTop = topPos.contains(curCarPos) && isGoingClockWise(carNo);
-        boolean leavingBottom =  bottomPos.contains(curCarPos) && isGoingCounterClockWise(carNo);
-        return leavingBottom || leavingTop;
+    	List<Integer> exitsForCar = this.exits.get(curCarPos);
+    	return exitsForCar != null && exitsForCar.contains(carNo);
     }
 
     public void enter(int no) {

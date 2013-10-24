@@ -47,17 +47,18 @@ class Car extends Thread {
     Pos barpos;                      // Barrierpositon (provided by GUI)
     Color col;                       // Car  color
     Gate mygate;                     // Gate at startposition
-
+    Alley alley;
 
     int speed;                       // Current car speed
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
 
-    public Car(int no, CarDisplayI cd, Gate g) {
+    public Car(int no, CarDisplayI cd, Gate g, Alley alley) {
 
-        this.no = no;
+    	this.no = no;
         this.cd = cd;
         mygate = g;
+        this.alley = alley;
         startpos = cd.getStartPos(no);
         barpos = cd.getBarrierPos(no);  // For later use
 
@@ -128,6 +129,14 @@ class Car extends Thread {
                 	
                 newpos = nextPos(curpos);
                 
+                if (alley.isAboutToEnter(no, newpos)) {
+                    cd.println("Car " + no + " is about to enter the alley.");
+                    alley.enter(no);
+                } else if (alley.hasLeft(no, curpos)) {
+                    cd.println("Car " + no + " has left the alley.");
+                    alley.leave(no);
+                }
+                
                 //  Move to new position 
                 cd.clear(curpos);
                 cd.mark(curpos,newpos,col,no);
@@ -152,15 +161,17 @@ public class CarControl implements CarControlI{
     CarDisplayI cd;           // Reference to GUI
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
+    Alley alley;
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
         car  = new  Car[9];
         gate = new Gate[9];
+        alley = new Alley();
 
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no]);
+            car[no] = new Car(no,cd,gate[no], alley);
             car[no].start();
         } 
     }

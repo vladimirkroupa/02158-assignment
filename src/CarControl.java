@@ -56,13 +56,17 @@ class Car extends Thread {
     
     HashMap posSemaMap;
 
-    public Car(int no, CarDisplayI cd, Gate g, Alley alley,HashMap posSemaMap) {
+    Barrier bar;
+    
+    public Car(int no, CarDisplayI cd, Gate g, Alley alley, HashMap posSemaMap,Barrier bar) {
 
     	this.no = no;
         this.cd = cd;
         mygate = g;
         this.alley = alley;
         this.posSemaMap = posSemaMap;
+        this.bar = bar;
+        
         startpos = cd.getStartPos(no);
         barpos = cd.getBarrierPos(no);  // For later use
 
@@ -139,6 +143,12 @@ class Car extends Thread {
                     alley.enter(no);
                 }
                 
+                
+                if(bar.isInfrontOfBarrier(no, curpos)){
+                	bar.sync(no);
+                }
+                
+                
                 //Get the position semaphore
                 Semaphore newPosSema = (Semaphore)posSemaMap.get(newpos);
                 newPosSema.P();
@@ -179,6 +189,8 @@ public class CarControl implements CarControlI{
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
     Alley alley;
+    //Modified by Henry
+    Barrier bar;
 
     HashMap<Pos,Semaphore> posSemaMap = new HashMap<Pos,Semaphore>();
 
@@ -187,6 +199,8 @@ public class CarControl implements CarControlI{
         car  = new  Car[9];
         gate = new Gate[9];
         alley = new Alley();
+      //Modified by Henry
+        bar = new Barrier();
 
         for (int row = 0;row<11;row++){
         	for (int col=0;col<12;col++){
@@ -196,9 +210,11 @@ public class CarControl implements CarControlI{
         
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no], alley,posSemaMap);
+            //Modified by Henry
+            car[no] = new Car(no,cd,gate[no], alley,posSemaMap,bar);
             car[no].start();
         }
+        
 
     }
     
@@ -217,10 +233,15 @@ public class CarControl implements CarControlI{
 
     public void barrierOn() { 
         cd.println("Barrier On not implemented in this version");
+      //Modified by Henry
+        bar.on();
     }
 
     public void barrierOff() { 
         cd.println("Barrier Off not implemented in this version");
+        //Modified by Henry
+        bar.off();
+
     }
 
     public void barrierShutDown() { 

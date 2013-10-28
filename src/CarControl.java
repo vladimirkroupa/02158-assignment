@@ -6,6 +6,7 @@
 
 
 import java.awt.Color;
+import java.util.HashMap;
 
 class Gate {
 
@@ -52,13 +53,16 @@ class Car extends Thread {
     int speed;                       // Current car speed
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
+    
+    HashMap posSemaMap;
 
-    public Car(int no, CarDisplayI cd, Gate g, Alley alley) {
+    public Car(int no, CarDisplayI cd, Gate g, Alley alley,HashMap posSemaMap) {
 
     	this.no = no;
         this.cd = cd;
         mygate = g;
         this.alley = alley;
+        this.posSemaMap = posSemaMap;
         startpos = cd.getStartPos(no);
         barpos = cd.getBarrierPos(no);  // For later use
 
@@ -129,13 +133,15 @@ class Car extends Thread {
                 	
                 newpos = nextPos(curpos);
                 
+                //Get the alley semaphore
                 if (alley.isAboutToEnter(no, curpos)) {
                     cd.println("Car " + no + " is about to enter the alley.");
                     alley.enter(no);
-                } else if (alley.hasLeft(no, curpos)) {
-                    cd.println("Car " + no + " has left the alley.");
-                    alley.leave(no);
                 }
+                
+                //Get the position semaphore
+                Semaphore newPosSema = (Semaphore)posSemaMap.get(newpos);
+                newPosSema.P();
                 
                 //  Move to new position 
                 cd.clear(curpos);
@@ -143,6 +149,17 @@ class Car extends Thread {
                 sleep(speed());
                 cd.clear(curpos,newpos);
                 cd.mark(newpos,col,no);
+                
+                //remove the position semaphore
+                Semaphore curPosSema = (Semaphore)posSemaMap.get(curpos);
+                curPosSema.V();
+                
+                //remove the alley semaphore
+                if (alley.hasLeft(no, curpos)) {
+                    cd.println("Car " + no + " has left the alley.");
+                    alley.leave(no);
+                }
+                
 
                 curpos = newpos;
             }
@@ -162,6 +179,8 @@ public class CarControl implements CarControlI{
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
     Alley alley;
+    //Added by Henry
+    HashMap<Pos,Semaphore> posSemaMap = new HashMap<Pos,Semaphore>();
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
@@ -169,12 +188,21 @@ public class CarControl implements CarControlI{
         gate = new Gate[9];
         alley = new Alley();
 
+        //Added by Henry
+        for (int row = 0;row<11;row++){
+        	for (int col=0;col<12;col++){
+        		posSemaMap.put(new Pos(row,col), new Semaphore(1));
+        	}
+        }
+        
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no], alley);
+            car[no] = new Car(no,cd,gate[no], alley,posSemaMap);
             car[no].start();
         }
+
     }
+    
 
     public boolean hasBridge() {
         return false;				// Change for bridge version

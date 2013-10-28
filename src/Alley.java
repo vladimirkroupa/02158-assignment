@@ -10,6 +10,8 @@ public class Alley {
     Map<Pos, List<Integer>> entries = new HashMap<>();
     Map<Pos, List<Integer>> exits = new HashMap<>();
     
+   
+    
     Alley() {
     	addMapPosEntry(entries, new Pos(2, 1), 1, 2);
     	addMapPosEntry(entries, new Pos(1, 2), 3, 4);

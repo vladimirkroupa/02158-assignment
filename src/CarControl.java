@@ -145,9 +145,14 @@ class Car extends Thread {
                 
                 
                 if(bar.isInfrontOfBarrier(no, curpos)){
+                	System.out.println("Car "+no+ " is in front of barrier");
                 	bar.sync(no);
                 }
                 
+                if(curpos.equals(new Pos(5,3))){
+                	//for debugging car 0 when barrier is On, means that it has passed the barrier
+                	//System.out.println("Car 0 in 5,3");
+                }
                 
                 //Get the position semaphore
                 Semaphore newPosSema = (Semaphore)posSemaMap.get(newpos);
@@ -189,7 +194,6 @@ public class CarControl implements CarControlI{
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
     Alley alley;
-    //Modified by Henry
     Barrier bar;
 
     HashMap<Pos,Semaphore> posSemaMap = new HashMap<Pos,Semaphore>();
@@ -199,7 +203,6 @@ public class CarControl implements CarControlI{
         car  = new  Car[9];
         gate = new Gate[9];
         alley = new Alley();
-      //Modified by Henry
         bar = new Barrier();
 
         for (int row = 0;row<11;row++){
@@ -210,11 +213,11 @@ public class CarControl implements CarControlI{
         
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            //Modified by Henry
             car[no] = new Car(no,cd,gate[no], alley,posSemaMap,bar);
             car[no].start();
         }
         
+        bar.start();
 
     }
     
@@ -232,14 +235,12 @@ public class CarControl implements CarControlI{
     }
 
     public void barrierOn() { 
-        cd.println("Barrier On not implemented in this version");
-      //Modified by Henry
+        cd.println("Barrier is ON");
         bar.on();
     }
 
     public void barrierOff() { 
-        cd.println("Barrier Off not implemented in this version");
-        //Modified by Henry
+        cd.println("Barrier is OFF");
         bar.off();
 
     }

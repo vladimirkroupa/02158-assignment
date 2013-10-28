@@ -2,19 +2,23 @@ import java.util.HashMap;
 
 public class Barrier extends Thread {
 
-	Semaphore[] barrierSemaArr = new Semaphore[9];
-	Semaphore cont = new Semaphore(0);
+	Semaphore[] carBarrierSema = new Semaphore[9];
+	Semaphore[] carContinueSema = new Semaphore[9];
 
     HashMap<Pos,Integer> entries = new HashMap<>();
     
     boolean barrierOn = false;
+    boolean barrierToBeTurnedOff = false;
     	
 	public Barrier() {
-		for (int i = 0; i < barrierSemaArr.length; i++) {
-			barrierSemaArr[i] = new Semaphore(0);
+		for (int i = 0; i < carBarrierSema.length; i++) {
+			carBarrierSema[i] = new Semaphore(0);
+		}
+		for (int i = 0; i < carContinueSema.length; i++) {
+			carContinueSema[i] = new Semaphore(0);
 		}
 		
-		entries.put(new Pos(5,3),new Integer(0));
+		entries.put(new Pos(6,3),new Integer(0));
 		entries.put(new Pos(6,4),new Integer(1));
 		entries.put(new Pos(6,5),new Integer(2));
 		entries.put(new Pos(6,6),new Integer(3));
@@ -31,36 +35,31 @@ public class Barrier extends Thread {
 	//TO BE CALLED BY BARRIER
 	
 	public void on() {
-		this.start();
 		this.barrierOn = true;
 	} // Activate barrier
 
 	public void off() {
-		
-		this.barrierOn = false;
-		barrierSemaArr = new Semaphore[9];
-		for (int i = 0; i < barrierSemaArr.length; i++) {
-			barrierSemaArr[i] = new Semaphore(0);
-		}		
-		cont = new Semaphore(0);
-		this.interrupt();
+		barrierToBeTurnedOff = true;
 	} // Deactivate barrier
 
 	
 	public void run() {
 		while(true){
 			try {
-				for (int i = 0; i < barrierSemaArr.length; i++) {				
-					System.out.println("In BARRIER RUN barrierSemaArr "+ i + ":" +barrierSemaArr[i] );					
-					barrierSemaArr[i].P(); // wait for all
+				for (int i = 0; i < carBarrierSema.length; i++) {				
+					carBarrierSema[i].P(); // wait for all
 				}
-				for (int i = 0; i < barrierSemaArr.length; i++) {
-					System.out.println("In BARRIER RUN  cont :" + cont );
-					cont.V(); //signal all
+				
+				for (int i = 0; i < carContinueSema.length; i++) {
+					carContinueSema[i].V(); //signal all
+				}
+				System.out.println("Signal all to start again");
+				
+				if(barrierToBeTurnedOff){
+					this.barrierOn = false;
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Thread terminated");
 			}
 		}
 	}
@@ -70,12 +69,9 @@ public class Barrier extends Thread {
 	public void sync(int carNo){
 		try {
 			System.out.println("Called barrier sync by " + carNo);
-			barrierSemaArr[carNo].V();
-			System.out.println("barrierSemaArr "+ carNo + ":" +barrierSemaArr[carNo] );
-			cont.P();
-			System.out.println("cont :" + cont );
+			carBarrierSema[carNo].V();
+			carContinueSema[carNo].P();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

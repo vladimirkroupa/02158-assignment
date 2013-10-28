@@ -179,7 +179,7 @@ public class CarControl implements CarControlI{
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
     Alley alley;
-    //Added by Henry
+
     HashMap<Pos,Semaphore> posSemaMap = new HashMap<Pos,Semaphore>();
 
     public CarControl(CarDisplayI cd) {
@@ -188,7 +188,6 @@ public class CarControl implements CarControlI{
         gate = new Gate[9];
         alley = new Alley();
 
-        //Added by Henry
         for (int row = 0;row<11;row++){
         	for (int col=0;col<12;col++){
         		posSemaMap.put(new Pos(row,col), new Semaphore(1));

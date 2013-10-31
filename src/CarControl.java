@@ -7,6 +7,7 @@
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Map;
 
 class Gate {
 
@@ -54,11 +55,11 @@ class Car extends Thread {
     Pos curpos;                      // Current position 
     Pos newpos;                      // New position to go to
     
-    HashMap posSemaMap;
+    Map<Pos, Semaphore> posSemaMap;
 
     Barrier bar;
     
-    public Car(int no, CarDisplayI cd, Gate g, Alley alley, HashMap posSemaMap,Barrier bar) {
+    public Car(int no, CarDisplayI cd, Gate g, Alley alley, Map<Pos, Semaphore> posSemaMap, Barrier bar) {
 
     	this.no = no;
         this.cd = cd;
@@ -155,7 +156,7 @@ class Car extends Thread {
                 }
                 
                 //Get the position semaphore
-                Semaphore newPosSema = (Semaphore)posSemaMap.get(newpos);
+                Semaphore newPosSema = posSemaMap.get(newpos);
                 newPosSema.P();
                 
                 //  Move to new position 
@@ -166,7 +167,7 @@ class Car extends Thread {
                 cd.mark(newpos,col,no);
                 
                 //remove the position semaphore
-                Semaphore curPosSema = (Semaphore)posSemaMap.get(curpos);
+                Semaphore curPosSema = posSemaMap.get(curpos);
                 curPosSema.V();
                 
                 //remove the alley semaphore
@@ -196,7 +197,7 @@ public class CarControl implements CarControlI{
     Alley alley;
     Barrier bar;
 
-    HashMap<Pos,Semaphore> posSemaMap = new HashMap<Pos,Semaphore>();
+    Map<Pos, Semaphore> posSemaMap = new HashMap<Pos, Semaphore>();
 
     public CarControl(CarDisplayI cd) {
         this.cd = cd;
@@ -213,7 +214,7 @@ public class CarControl implements CarControlI{
         
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no], alley,posSemaMap,bar);
+            car[no] = new Car(no,cd,gate[no], alley, posSemaMap, bar);
             car[no].start();
         }
         

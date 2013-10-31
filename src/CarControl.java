@@ -249,7 +249,10 @@ public class CarControl implements CarControlI{
         cd.println("Barrier shut down not implemented in this version");
         // This sleep is for illustrating how blocking affects the GUI
         // Remove when shutdown is implemented.
-        try { Thread.sleep(5000); } catch (InterruptedException e) { }
+        try { 
+        	bar.shutdown();
+        	//Thread.sleep(5000); 
+        } catch (Exception e) { }
         // Recommendation: 
         //   If not implemented call barrier.off() instead to make graphics consistent
     }

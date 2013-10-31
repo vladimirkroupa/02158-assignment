@@ -8,7 +8,7 @@ public class Barrier extends Thread {
     HashMap<Pos,Integer> entries = new HashMap<>();
     
     boolean barrierOn = false;
-    boolean barrierToBeTurnedOff = false;
+    boolean barrierToBeShutDown = false;
     	
 	public Barrier() {
 		for (int i = 0; i < carBarrierSema.length; i++) {
@@ -39,9 +39,11 @@ public class Barrier extends Thread {
 	} // Activate barrier
 
 	public void off() {
-		barrierToBeTurnedOff = true;
 	} // Deactivate barrier
 
+	public void shutdown(){
+		barrierToBeShutDown = true;
+	}
 	
 	public void run() {
 		while(true){
@@ -55,7 +57,7 @@ public class Barrier extends Thread {
 				}
 				System.out.println("Signal all to start again");
 				
-				if(barrierToBeTurnedOff){
+				if(barrierToBeShutDown){
 					this.barrierOn = false;
 				}
 			} catch (InterruptedException e) {

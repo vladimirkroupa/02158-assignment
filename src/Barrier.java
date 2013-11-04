@@ -11,6 +11,7 @@ public class Barrier extends Thread {
     boolean barrierOn = false;
     boolean barrierToBeShutDown = false;
     boolean barrierToBeOff = false;
+
     	
 	public Barrier() {
 		for (int i = 0; i < carBarrierSema.length; i++) {
@@ -53,6 +54,7 @@ public class Barrier extends Thread {
 	} // Activate barrier
 	
 	public void off() {
+
 		this.barrierOn = false;
 		this.barrierToBeOff = true;
 		this.barrierToBeShutDown = false;
@@ -71,7 +73,9 @@ public class Barrier extends Thread {
 		this.barrierToBeShutDown = true;
 	} // Shutdown barrier
 
-	
+
+
+
 	public void run() {
 		while(true){
 			try {

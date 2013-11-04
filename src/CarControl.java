@@ -146,6 +146,7 @@ class Car extends Thread {
                 
                 if(bar.isInfrontOfBarrier(no, curpos)){
                 	System.out.println("Car "+no+ " is in front of barrier");
+                	bar.isWaiting.put(no, 1);//keep record of which car is waiting
                 	bar.sync(no);
                 }
                 
@@ -246,10 +247,11 @@ public class CarControl implements CarControlI{
     }
 
     public void barrierShutDown() { 
-        cd.println("Barrier shut down not implemented in this version");
+        cd.println("Barrier shut down");
+        bar.shutdown();
         // This sleep is for illustrating how blocking affects the GUI
         // Remove when shutdown is implemented.
-        try { Thread.sleep(5000); } catch (InterruptedException e) { }
+        //try { Thread.sleep(5000); } catch (InterruptedException e) { }
         // Recommendation: 
         //   If not implemented call barrier.off() instead to make graphics consistent
     }

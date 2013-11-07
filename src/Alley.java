@@ -3,18 +3,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Alley {
-
-	Semaphore sem = new Semaphore(1);
-
+/**
+ * Alley base class. 
+ *
+ */
+public abstract class Alley {
+	
 	Map<Pos, List<Integer>> entries = new HashMap<>();
 	Map<Pos, List<Integer>> exits = new HashMap<>();
-
-	int numAlleyDown = 0;
-	int numAlleyUp = 0;
-
-	Semaphore numAlleyDownSema = new Semaphore(1);
-	Semaphore numAlleyUpSema = new Semaphore(1);
 
 	Alley() {
 		addMapPosEntry(entries, new Pos(2, 1), 1, 2);
@@ -25,8 +21,7 @@ public class Alley {
 		addMapPosEntry(exits, new Pos(0, 1), 5, 6, 7, 8);
 	}
 
-	private void addMapPosEntry(Map<Pos, List<Integer>> map, Pos pos,
-			Integer... carNos) {
+	private void addMapPosEntry(Map<Pos, List<Integer>> map, Pos pos, Integer... carNos) {
 		List<Integer> carNoList = new ArrayList<>();
 		for (Integer carNo : carNos) {
 			carNoList.add(carNo);
@@ -34,11 +29,11 @@ public class Alley {
 		map.put(pos, carNoList);
 	}
 
-	private boolean isGoingClockWise(int carNo) {
+	protected boolean isGoingClockWise(int carNo) {
 		return (carNo < 5);
 	}
 
-	private boolean isGoingCounterClockWise(int carNo) {
+	protected boolean isGoingCounterClockWise(int carNo) {
 		return (carNo >= 5);
 	}
 
@@ -52,50 +47,8 @@ public class Alley {
 		return exitsForCar != null && exitsForCar.contains(carNo);
 	}
 
-	public void enter(int no) {
-		try {
-			if (isGoingClockWise(no)) {
-				numAlleyUpSema.P();
-				numAlleyUp++;
-				if (numAlleyUp == 1) {
-					sem.P();
-				}
-				numAlleyUpSema.V();
+	public abstract void enter(int no) throws InterruptedException;
 
-			}
-			if (isGoingCounterClockWise(no)) {
-				numAlleyDownSema.P();
-				numAlleyDown++;
-				if (numAlleyDown == 1) {
-					sem.P();
-				}
-				numAlleyDownSema.V();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void leave(int no) {
-		try {
-			if (isGoingClockWise(no)) {
-				numAlleyUpSema.P();
-				numAlleyUp--;
-				if (numAlleyUp == 0) {
-					sem.V();
-				}
-				numAlleyUpSema.V();
-			}
-			if (isGoingCounterClockWise(no)) {
-				numAlleyDownSema.P();
-				numAlleyDown--;
-				if (numAlleyDown == 0) {
-					sem.V();
-				}
-				numAlleyDownSema.V();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+	public abstract void leave(int no) throws InterruptedException;
+	
 }

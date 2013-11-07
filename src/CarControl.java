@@ -204,7 +204,7 @@ public class CarControl implements CarControlI{
         this.cd = cd;
         car  = new  Car[9];
         gate = new Gate[9];
-        alley = new Alley();
+        alley = new MonitorAlley();
         bar = new Barrier();
 
         for (int row = 0;row<11;row++){

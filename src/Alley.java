@@ -14,15 +14,25 @@ public abstract class Alley {
 
 	protected CarDisplayI cd;
 	
-	Alley(CarDisplayI cd) {
-		this.cd = cd;
-		
+	public void initRedPositions() {
 		addMapPosEntry(entries, new Pos(2, 1), 1, 2);
 		addMapPosEntry(entries, new Pos(1, 2), 3, 4);
 		addMapPosEntry(entries, new Pos(10, 0), 5, 6, 7, 8);
-
+		
 		addMapPosEntry(exits, new Pos(9, 1), 1, 2, 3, 4);
-		addMapPosEntry(exits, new Pos(0, 1), 5, 6, 7, 8);
+		addMapPosEntry(exits, new Pos(1, 0), 5, 6, 7, 8);
+	}
+
+	public void initBluePositions() {
+		addMapPosEntry(entries, new Pos(1, 1), 3, 4);
+		addMapPosEntry(entries, new Pos(1, 0), 5, 6, 7, 8);
+		
+		addMapPosEntry(exits, new Pos(1, 0), 3, 4);
+		addMapPosEntry(exits, new Pos(1, 1), 5, 6, 7, 8);
+	}
+	
+	Alley(CarDisplayI cd) {
+		this.cd = cd;
 	}
 
 	private void addMapPosEntry(Map<Pos, List<Integer>> map, Pos pos, Integer... carNos) {

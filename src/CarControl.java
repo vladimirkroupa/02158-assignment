@@ -49,7 +49,8 @@ class Car extends Thread {
     Pos barpos;                      // Barrierpositon (provided by GUI)
     Color col;                       // Car  color
     Gate mygate;                     // Gate at startposition
-    Alley alley;
+    Alley redAlley;
+    Alley blueAlley;
 
     int speed;                       // Current car speed
     Pos curpos;                      // Current position 
@@ -59,12 +60,13 @@ class Car extends Thread {
 
     Barrier bar;
     
-    public Car(int no, CarDisplayI cd, Gate g, Alley alley, Map<Pos, Semaphore> posSemaMap, Barrier bar) {
+    public Car(int no, CarDisplayI cd, Gate g, Alley redAlley, Alley blueAlley, Map<Pos, Semaphore> posSemaMap, Barrier bar) {
 
     	this.no = no;
         this.cd = cd;
         mygate = g;
-        this.alley = alley;
+        this.redAlley = redAlley;
+        this.blueAlley = blueAlley;
         this.posSemaMap = posSemaMap;
         this.bar = bar;
         
@@ -139,9 +141,13 @@ class Car extends Thread {
                 newpos = nextPos(curpos);
                 
                 //Get the alley semaphore
-                if (alley.isAboutToEnter(no, curpos)) {
-                    cd.println("Car " + no + " is about to enter the alley.");
-                    alley.enter(no);
+                if (redAlley.isAboutToEnter(no, curpos)) {
+                    cd.println("Car " + no + " is about to enter the red alley.");
+                    redAlley.enter(no);
+                }
+                if (blueAlley.isAboutToEnter(no, curpos)) {
+                	cd.println("Car " + no + " is about to enter the blue alley.");
+                	blueAlley.enter(no);
                 }
                 
                 
@@ -170,11 +176,16 @@ class Car extends Thread {
                 Semaphore curPosSema = posSemaMap.get(curpos);
                 curPosSema.V();
                 
-                //remove the alley semaphore
-                if (alley.hasLeft(no, curpos)) {
-                    cd.println("Car " + no + " has left the alley.");
-                    alley.leave(no);
+                
+                if (blueAlley.hasLeft(no, curpos)) {
+                    cd.println("Car " + no + " has left the blue alley.");
+                    blueAlley.leave(no);
                 }
+                //remove the alley semaphore
+                if (redAlley.hasLeft(no, curpos)) {
+                    cd.println("Car " + no + " has left the red alley.");
+                    redAlley.leave(no);
+                }                
 
                 curpos = newpos;
             }
@@ -193,7 +204,8 @@ public class CarControl implements CarControlI{
     CarDisplayI cd;           // Reference to GUI
     Car[]  car;               // Cars
     Gate[] gate;              // Gates
-    Alley alley;
+    Alley redAlley;
+    Alley blueAlley;
     Barrier bar;
 
     Map<Pos, Semaphore> posSemaMap = new HashMap<Pos, Semaphore>();
@@ -202,7 +214,10 @@ public class CarControl implements CarControlI{
         this.cd = cd;
         car  = new  Car[9];
         gate = new Gate[9];
-        alley = new FairMonitorAlley(cd);
+        redAlley = new FairMonitorAlley(cd);
+        redAlley.initRedPositions();
+        blueAlley = new MonitorAlley(cd);
+        blueAlley.initBluePositions();
         bar = new Barrier();
 
         for (int row = 0;row<11;row++){
@@ -213,7 +228,7 @@ public class CarControl implements CarControlI{
         
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no], alley, posSemaMap, bar);
+            car[no] = new Car(no,cd,gate[no], redAlley, blueAlley, posSemaMap, bar);
             car[no].start();
         }
         

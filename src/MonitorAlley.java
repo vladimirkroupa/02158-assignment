@@ -8,6 +8,10 @@ public class MonitorAlley extends Alley {
 	private int numAlleyDown = 0;
 	private int numAlleyUp = 0;
 	
+	public MonitorAlley(CarDisplayI cd) {
+		super(cd);
+	}
+
 	public synchronized void enter(int no) throws InterruptedException {
 		if (isGoingClockWise(no)) {
 			if (numAlleyDown > 0) {
@@ -20,18 +24,19 @@ public class MonitorAlley extends Alley {
 			}
 			numAlleyDown++;
 		}
+
 	}
 
 	public synchronized void leave(int no) throws InterruptedException {
 		if (isGoingClockWise(no)) {
 			numAlleyUp--;
 			if (numAlleyUp == 0) {
-				this.notify();
+				this.notifyAll();
 			}
 		} else if (isGoingCounterClockWise(no)) {
 			numAlleyDown--;
 			if (numAlleyDown == 0) {
-				this.notify();
+				this.notifyAll();
 			}
 		}
 	}

@@ -145,13 +145,12 @@ class Car extends Thread {
                 }
                 
                 
-                if(bar.isInfrontOfBarrier(no, curpos)){
-                	System.out.println("Car "+no+ " is in front of barrier");
-                	bar.isWaiting.put(no, 1);//keep record of which car is waiting
-                	bar.sync(no);
+                if (bar.isInfrontOfBarrier(no, curpos)) {
+                	//bar.isWaiting.put(no, 1); //keep record of which car is waiting
+                	//bar.sync(no);
                 }
                 
-                if(curpos.equals(new Pos(5,3))){
+                if (curpos.equals(new Pos(5,3))) {
                 	//for debugging car 0 when barrier is On, means that it has passed the barrier
                 	//System.out.println("Car 0 in 5,3");
                 }
@@ -176,7 +175,6 @@ class Car extends Thread {
                     cd.println("Car " + no + " has left the alley.");
                     alley.leave(no);
                 }
-                
 
                 curpos = newpos;
             }
@@ -204,7 +202,7 @@ public class CarControl implements CarControlI{
         this.cd = cd;
         car  = new  Car[9];
         gate = new Gate[9];
-        alley = new MonitorAlley();
+        alley = new FairMonitorAlley(cd);
         bar = new Barrier();
 
         for (int row = 0;row<11;row++){
@@ -244,7 +242,6 @@ public class CarControl implements CarControlI{
     public void barrierOff() { 
         cd.println("Barrier is OFF");
         bar.off();
-
     }
 
     public void barrierShutDown() { 
@@ -254,8 +251,9 @@ public class CarControl implements CarControlI{
         // Remove when shutdown is implemented.
         try { 
         	bar.shutdown();
-
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
 
         // Recommendation: 
         //   If not implemented call barrier.off() instead to make graphics consistent

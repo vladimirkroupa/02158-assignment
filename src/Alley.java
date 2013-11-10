@@ -9,10 +9,14 @@ import java.util.Map;
  */
 public abstract class Alley {
 	
-	Map<Pos, List<Integer>> entries = new HashMap<>();
-	Map<Pos, List<Integer>> exits = new HashMap<>();
+	private Map<Pos, List<Integer>> entries = new HashMap<>();
+	private Map<Pos, List<Integer>> exits = new HashMap<>();
 
-	Alley() {
+	protected CarDisplayI cd;
+	
+	Alley(CarDisplayI cd) {
+		this.cd = cd;
+		
 		addMapPosEntry(entries, new Pos(2, 1), 1, 2);
 		addMapPosEntry(entries, new Pos(1, 2), 3, 4);
 		addMapPosEntry(entries, new Pos(10, 0), 5, 6, 7, 8);

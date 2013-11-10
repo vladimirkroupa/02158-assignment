@@ -12,7 +12,8 @@ public class SemaphoreAlley extends Alley {
 	private Semaphore numAlleyDownSema = new Semaphore(1);
 	private Semaphore numAlleyUpSema = new Semaphore(1);
 
-	public SemaphoreAlley() {
+	public SemaphoreAlley(CarDisplayI cd) {
+		super(cd);
 		numAlleyDown = 0;
 		numAlleyUp = 0;
 	}

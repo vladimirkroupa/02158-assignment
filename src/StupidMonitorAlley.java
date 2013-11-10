@@ -6,7 +6,8 @@ public class StupidMonitorAlley extends Alley {
 
 	private boolean occupied;
 	
-	public StupidMonitorAlley() {
+	public StupidMonitorAlley(CarDisplayI cd) {
+		super(cd);
 		occupied = false;
 	}
 	
@@ -21,7 +22,7 @@ public class StupidMonitorAlley extends Alley {
 	@Override
 	public synchronized void leave(int no) {
 		occupied = false;
-		this.notify();
+		this.notifyAll();
 	}
 	
 }

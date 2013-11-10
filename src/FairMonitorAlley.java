@@ -39,14 +39,22 @@ public class FairMonitorAlley extends Alley {
 		if (waitingCCW == null) {
 			return false;
 		}
-		return (passDirectionDiff >= PASS_DIFF_THRESHOLD);  
+		boolean tooMuch = (passDirectionDiff >= PASS_DIFF_THRESHOLD);
+		if (tooMuch) {
+			cd.println("Car "+ carNo +" is going to wait! (difference = "+ passDirectionDiff +")");
+		}
+		return tooMuch;
 	}
 	
 	private boolean tooMuchPassesCCW(int carNo) {
 		if (waitingCW == null) {
 			return false;
 		}
-		return (passDirectionDiff <= -PASS_DIFF_THRESHOLD);
+		boolean tooMuch = (passDirectionDiff <= -PASS_DIFF_THRESHOLD);
+		if (tooMuch) {
+			cd.println("Car "+ carNo +" is going to wait! (difference = "+ passDirectionDiff +")");
+		}
+		return tooMuch;
 	}	
 	
 	private synchronized void enterCW(int no) throws InterruptedException {

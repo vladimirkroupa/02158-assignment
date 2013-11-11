@@ -80,7 +80,8 @@ public class Barrier extends Thread {
 		while(true){
 			try {
 
-				for (int i = 0; i < carBarrierSema.length; i++) {				
+				for (int i = 0; i < carBarrierSema.length; i++) {	
+					System.out.println("warrier wait");
 					carBarrierSema[i].P(); // wait for all
 
 				}

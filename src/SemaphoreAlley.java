@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 /**
  * Semaphore implementation of {@link Alley} that permits several cars going in the same direction at a time. 
  *  
@@ -11,6 +13,8 @@ public class SemaphoreAlley extends Alley {
 
 	private Semaphore numAlleyDownSema = new Semaphore(1);
 	private Semaphore numAlleyUpSema = new Semaphore(1);
+	
+	private HashSet<Integer> carsInAlley = new HashSet<Integer>();		
 
 	public SemaphoreAlley(CarDisplayI cd) {
 		super(cd);
@@ -29,7 +33,7 @@ public class SemaphoreAlley extends Alley {
 			numAlleyUpSema.V();
 
 		}
-		if (isGoingCounterClockWise(no)) {
+		if (isGoingCounterClockWise(no)) {			
 			numAlleyDownSema.P();
 			numAlleyDown++;
 			if (numAlleyDown == 1) {
@@ -37,6 +41,7 @@ public class SemaphoreAlley extends Alley {
 			}
 			numAlleyDownSema.V();
 		}
+		carsInAlley.add(no);
 	}
 
 	@Override
@@ -56,6 +61,13 @@ public class SemaphoreAlley extends Alley {
 				sem.V();
 			}
 			numAlleyDownSema.V();
+		}
+		carsInAlley.remove(no);
+	}
+	
+	public void removeCar(int no) throws InterruptedException{
+		if(carsInAlley.contains(no)){
+			leave(no);
 		}
 	}
 	

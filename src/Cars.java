@@ -680,13 +680,14 @@ public class Cars extends JFrame implements CarDisplayI {
  *  NO blocking limit setting in this version
  *
     // Variables used during limit setting
+     * */
     private SetLimitThread limitThread; 
     private Semaphore      limitDone;
     private int            limitValue;
     
     
-     * Thread to carry out change of bridge limit since
-     * it may be blocked by CarControl
+/*     * Thread to carry out change of bridge limit since
+     * it may be blocked by CarControl*/
      
     class SetLimitThread extends Thread {
         int newmax;
@@ -697,7 +698,7 @@ public class Cars extends JFrame implements CarDisplayI {
         }
 
         public void run() {
-            // ctr.setLimit(newmax);
+            ctr.setLimit(newmax);
             
             System.out.println("SetLimit returned");
             EventQueue.invokeLater(new Runnable() {
@@ -706,7 +707,7 @@ public class Cars extends JFrame implements CarDisplayI {
             
         }
     }
-*/
+
     
     // Variables used during barrier shut down
     private ShutDownThread shutDownThread = null;
@@ -944,7 +945,7 @@ public class Cars extends JFrame implements CarDisplayI {
     
  /*
  *  No blocking of setLimit in this version
- *     
+ *     */
     void setLimit(int max, Semaphore done) {
 
         if (! bridgepresent) {
@@ -985,7 +986,7 @@ public class Cars extends JFrame implements CarDisplayI {
         limitDone = null;
         System.out.println("endSetLimit end");
     }
-*/    
+    
     
    // Implementation of CarDisplayI 
     // Mark and clear requests for car no. 0 are processed directly in order not

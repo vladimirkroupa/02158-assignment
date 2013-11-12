@@ -58,8 +58,9 @@ class Car extends Thread {
     Map<Pos, Semaphore> posSemaMap;
 
     Barrier bar;
+    Bridge bri;
     
-    public Car(int no, CarDisplayI cd, Gate g, Alley alley, Map<Pos, Semaphore> posSemaMap, Barrier bar) {
+    public Car(int no, CarDisplayI cd, Gate g, Alley alley, Map<Pos, Semaphore> posSemaMap, Barrier bar,Bridge bri) {
 
     	this.no = no;
         this.cd = cd;
@@ -67,6 +68,7 @@ class Car extends Thread {
         this.alley = alley;
         this.posSemaMap = posSemaMap;
         this.bar = bar;
+        this.bri = bri;
         
         startpos = cd.getStartPos(no);
         barpos = cd.getBarrierPos(no);  // For later use
@@ -155,7 +157,11 @@ class Car extends Thread {
                 	//for debugging car 0 when barrier is On, means that it has passed the barrier
                 	//System.out.println("Car 0 in 5,3");
                 }
-                
+                //get bridge monitor
+                if(bri.isInforntofBridge(no,curpos)){
+                	cd.println("Car "+no+ " is in front of bridge");
+                	bri.enter();
+                }
                 //Get the position semaphore
                 Semaphore newPosSema = posSemaMap.get(newpos);
                 newPosSema.P();
@@ -170,6 +176,12 @@ class Car extends Thread {
                 //remove the position semaphore
                 Semaphore curPosSema = posSemaMap.get(curpos);
                 curPosSema.V();
+                
+                //remove bridge monitor
+                if (bri.hasLeft(no, newpos)) {
+                    cd.println("Car " + no + " has left the bridge.");
+                    bri.leave();
+                }               
                 
                 //remove the alley semaphore
                 if (alley.hasLeft(no, curpos)) {
@@ -197,6 +209,7 @@ public class CarControl implements CarControlI{
     Gate[] gate;              // Gates
     Alley alley;
     Barrier bar;
+    Bridge bri;
 
     Map<Pos, Semaphore> posSemaMap = new HashMap<Pos, Semaphore>();
 
@@ -206,6 +219,7 @@ public class CarControl implements CarControlI{
         gate = new Gate[9];
         alley = new MonitorAlley();
         bar = new Barrier();
+        bri = new Bridge();
 
         for (int row = 0;row<11;row++){
         	for (int col=0;col<12;col++){
@@ -215,7 +229,7 @@ public class CarControl implements CarControlI{
         
         for (int no = 0; no < 9; no++) {
             gate[no] = new Gate();
-            car[no] = new Car(no,cd,gate[no], alley, posSemaMap, bar);
+            car[no] = new Car(no,cd,gate[no], alley, posSemaMap, bar, bri);
             car[no].start();
         }
         
@@ -225,7 +239,7 @@ public class CarControl implements CarControlI{
     
 
     public boolean hasBridge() {
-        return false;				// Change for bridge version
+        return true;				// Change for bridge version
     }
     
     public void startCar(int no) {
@@ -262,7 +276,9 @@ public class CarControl implements CarControlI{
     }
 
     public void setLimit(int k) { 
-        cd.println("Setting of bridge limit not implemented in this version");
+        //cd.println("Setting of bridge limit not implemented in this version");
+    	bri.setLimit(k);
+        
     }
 
     public void removeCar(int no) { 

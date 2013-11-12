@@ -9,16 +9,30 @@ import java.util.Map;
  */
 public abstract class Alley {
 	
-	Map<Pos, List<Integer>> entries = new HashMap<>();
-	Map<Pos, List<Integer>> exits = new HashMap<>();
+	private Map<Pos, List<Integer>> entries = new HashMap<>();
+	private Map<Pos, List<Integer>> exits = new HashMap<>();
 
-	Alley() {
+	protected CarDisplayI cd;
+	
+	public void initRedPositions() {
 		addMapPosEntry(entries, new Pos(2, 1), 1, 2);
 		addMapPosEntry(entries, new Pos(1, 2), 3, 4);
 		addMapPosEntry(entries, new Pos(10, 0), 5, 6, 7, 8);
-
+		
 		addMapPosEntry(exits, new Pos(9, 1), 1, 2, 3, 4);
-		addMapPosEntry(exits, new Pos(0, 1), 5, 6, 7, 8);
+		addMapPosEntry(exits, new Pos(1, 0), 5, 6, 7, 8);
+	}
+
+	public void initBluePositions() {
+		addMapPosEntry(entries, new Pos(1, 1), 3, 4);
+		addMapPosEntry(entries, new Pos(1, 0), 5, 6, 7, 8);
+		
+		addMapPosEntry(exits, new Pos(1, 0), 3, 4);
+		addMapPosEntry(exits, new Pos(1, 1), 5, 6, 7, 8);
+	}
+	
+	Alley(CarDisplayI cd) {
+		this.cd = cd;
 	}
 
 	private void addMapPosEntry(Map<Pos, List<Integer>> map, Pos pos, Integer... carNos) {
@@ -30,11 +44,11 @@ public abstract class Alley {
 	}
 
 	protected boolean isGoingClockWise(int carNo) {
-		return (carNo < 5);
+		return (carNo >= 5);
 	}
 
 	protected boolean isGoingCounterClockWise(int carNo) {
-		return (carNo >= 5);
+		return (carNo < 5);
 	}
 
 	public boolean isAboutToEnter(int carNo, Pos curCarPos) {
@@ -50,5 +64,8 @@ public abstract class Alley {
 	public abstract void enter(int no) throws InterruptedException;
 
 	public abstract void leave(int no) throws InterruptedException;
+	
+	public abstract void removeCar(int no) throws InterruptedException;
+	
 	
 }

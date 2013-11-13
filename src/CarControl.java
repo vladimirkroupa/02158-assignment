@@ -69,12 +69,13 @@ class Car extends Thread {
 
 	Map<Pos, Semaphore> posSemaMap;
 
-	Barrier bar;
+	Barrier barrier;
+	Bridge bridge;
 
 	boolean isRemoved = false;
 
 	public Car(int no, CarDisplayI cd, Gate g, Alley redAlley, Alley blueAlley,
-			Map<Pos, Semaphore> posSemaMap, Barrier bar) {
+			Map<Pos, Semaphore> posSemaMap, Barrier barrier, Bridge bridge) {
 
 		this.no = no;
 		this.cd = cd;
@@ -82,7 +83,8 @@ class Car extends Thread {
 		this.redAlley = redAlley;
 		this.blueAlley = blueAlley;
 		this.posSemaMap = posSemaMap;
-		this.bar = bar;
+		this.barrier = barrier;
+		this.bridge = bridge;
 
 		startpos = cd.getStartPos(no);
 		barpos = cd.getBarrierPos(no); // For later use
@@ -180,12 +182,18 @@ class Car extends Thread {
 					blueAlley.enter(no);
 				}
 
-				if (bar.isInfrontOfBarrier(no, curpos)) {
+				if (barrier.isInfrontOfBarrier(no, curpos)) {
 					// bar.isWaiting.put(no, 1); //keep record of which car is
 					// waiting
-					bar.sync(no);
+					barrier.sync(no);
 				}
-
+                
+				//get bridge monitor
+                if (bridge.isInforntofBridge(no,curpos)) {
+                	cd.println("Car "+no+ " is in front of bridge");
+                	bridge.enter();
+                }
+                
 				// Get the position semaphore
 				Semaphore newPosSema = posSemaMap.get(newpos);
 				newPosSema.P();
@@ -201,11 +209,17 @@ class Car extends Thread {
 				Semaphore curPosSema = posSemaMap.get(curpos);
 				curPosSema.V();
 
+                //remove bridge monitor
+                if (bridge.hasLeft(no, newpos)) {
+                    cd.println("Car " + no + " has left the bridge.");
+                    bridge.leave();
+                }  				
+				
+				// remove the alley semaphore
 				if (blueAlley.hasLeft(no, curpos)) {
 					cd.println("Car " + no + " has left the blue alley.");
 					blueAlley.leave(no);
-				}
-				// remove the alley semaphore
+				}				
 				if (redAlley.hasLeft(no, curpos)) {
 					cd.println("Car " + no + " has left the red alley.");
 					redAlley.leave(no);
@@ -233,8 +247,9 @@ public class CarControl implements CarControlI {
 	Gate[] gate; // Gates
 	Alley redAlley;
 	Alley blueAlley;
-	Barrier bar;
+	Barrier barrier;
 	boolean[] isRemoved = new boolean[9];
+	Bridge bridge;
 
 	Map<Pos, Semaphore> posSemaMap = new HashMap<Pos, Semaphore>();
 
@@ -250,8 +265,9 @@ public class CarControl implements CarControlI {
 		blueAlley = new MonitorAlley(cd);
 		//blueAlley = new SemaphoreAlley(cd);
 		// blueAlley.initBluePositions();
-		bar = new Barrier();
-
+		barrier = new Barrier();
+		bridge = new Bridge();
+		
 		for (int row = 0; row < 11; row++) {
 			for (int col = 0; col < 12; col++) {
 				posSemaMap.put(new Pos(row, col), new Semaphore(1));
@@ -260,18 +276,17 @@ public class CarControl implements CarControlI {
 
 		for (int no = 0; no < 9; no++) {
 			gate[no] = new Gate();
-			car[no] = new Car(no, cd, gate[no], redAlley, blueAlley,
-					posSemaMap, bar);
+			car[no] = new Car(no, cd, gate[no], redAlley, blueAlley, posSemaMap, barrier, bridge);
 			car[no].start();
 			isRemoved[no] = false;
 		}
 
-		bar.start();
+		barrier.start();
 
 	}
 
 	public boolean hasBridge() {
-		return false; // Change for bridge version
+		return true;
 	}
 
 	public void startCar(int no) {
@@ -284,21 +299,21 @@ public class CarControl implements CarControlI {
 
 	public void barrierOn() {
 		cd.println("Barrier is ON");
-		bar.on();
+		barrier.on();
 	}
 
 	public void barrierOff() {
 		cd.println("Barrier is OFF");
-		bar.off();
+		barrier.off();
 	}
 
 	public void barrierShutDown() {
 		cd.println("Barrier shut down");
-		bar.shutdown();
+		barrier.shutdown();
 		// This sleep is for illustrating how blocking affects the GUI
 		// Remove when shutdown is implemented.
 		try {
-			bar.shutdown();
+			barrier.shutdown();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -323,8 +338,7 @@ public class CarControl implements CarControlI {
 
 	public void restoreCar(int no) {
 		if (car[no] == null) {
-			car[no] = new Car(no, cd, gate[no], redAlley, blueAlley,
-					posSemaMap, bar);
+			car[no] = new Car(no, cd, gate[no], redAlley, blueAlley, posSemaMap, barrier, bridge);
 			car[no].setIsRemoved(false);
 			car[no].start();
 		} else {

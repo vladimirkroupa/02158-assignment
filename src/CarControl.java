@@ -182,11 +182,7 @@ class Car extends Thread {
 					blueAlley.enter(no);
 				}
 
-				if (barrier.isInfrontOfBarrier(no, curpos)) {
-					// bar.isWaiting.put(no, 1); //keep record of which car is
-					// waiting
-					barrier.sync(no);
-				}
+                barrier.checkBarrierPosition(no, curpos);
                 
 				//get bridge monitor
                 if (bridge.isInforntofBridge(no,curpos)) {
@@ -265,7 +261,7 @@ public class CarControl implements CarControlI {
 		blueAlley = new MonitorAlley(cd);
 		//blueAlley = new SemaphoreAlley(cd);
 		// blueAlley.initBluePositions();
-		barrier = new Barrier();
+		barrier = new SemaphoreBarrier();
 		bridge = new Bridge();
 		
 		for (int row = 0; row < 11; row++) {
@@ -299,12 +295,12 @@ public class CarControl implements CarControlI {
 
 	public void barrierOn() {
 		cd.println("Barrier is ON");
-		barrier.on();
+		barrier.turnOn();
 	}
 
 	public void barrierOff() {
 		cd.println("Barrier is OFF");
-		barrier.off();
+		barrier.turnOff();
 	}
 
 	public void barrierShutDown() {

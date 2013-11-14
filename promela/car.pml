@@ -1,7 +1,3 @@
-
-#define M	2	/* no. of cars going up the alley*/
-#define N	2	/* no. of cars going down the alley */
-
 int noUpSema =1; /* semaphore to protect mutual exclusion on numAlleyUp variable */
 int noDownSema=1;  /* semaphore to protect mutual exclusion on numAlleyDown variable */
 int numAlleyUp = 0;
@@ -44,6 +40,7 @@ entry:
 		P(noUpSema);
 		numAlleyUp++;
 		if :: numAlleyUp==1--> P(alleySema);
+                             :: else --> skip;
 		fi;
 		V(noUpSema);
 		
@@ -57,6 +54,7 @@ exit:
 		P(noUpSema);
 		numAlleyUp--;
 		if :: numAlleyUp==0 --> V(alleySema);
+                             :: else --> skip;
 		fi;
 		V(noUpSema);
 	od  
@@ -73,6 +71,7 @@ entry2:
 		P(noDownSema);
 		numAlleyDown++;
 		if :: numAlleyDown==1--> P(alleySema);
+                             :: else --> skip;
 		fi;
 		V(noDownSema);
 		
@@ -86,6 +85,7 @@ exit2:
 		P(noDownSema);
 		numAlleyDown--;
 		if :: numAlleyDown==0 --> V(alleySema);
+                             :: else --> skip;
 		fi;
 		V(noDownSema);
 	od  
@@ -102,9 +102,10 @@ active proctype Check ()
 	od
 }
 
-/* Liveness properties (uncomment to verify) */
-ltl obl1  { [] (( (CW[p1]@entry) && [] (!CW[p2]@entry) && [] (!CCW[p5]@entry2) && [] (!CCW[p6]@entry2)) -> <> (CW[p1]@crit)) } 
-ltl res   { [] ( (CW[p1]@entry || CW[p1]@entry || CCW[p5]@entry2 || CCW[p6]@entry2) -> <> (CW[p1]@crit || CW[p2]@crit ||CCW[p5]@crit2 ||CCW[p6]@crit2) ) }
+
+
+ltl obl1 { [] ( ( CW[p1]@entry && [] !(CW[p2]@entry || CCW[p5]@entry2 || CCW[p6]@entry2) ) -> <> (CW[p1]@crit) )} 
+ltl res1   { [] ( (CW[p1]@entry || CW[p2]@entry || CCW[p5]@entry2 || CCW[p6]@entry2) -> <> (CW[p1]@crit || CW[p2]@crit || CCW[p5]@crit2 ||CCW[p6]@crit2) ) }
 ltl fair1 { [] ( (CW[p1]@entry) -> <>  (CW[p1]@crit) ) } 
 
 

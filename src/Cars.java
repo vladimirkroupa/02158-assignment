@@ -816,10 +816,9 @@ public class Cars extends JFrame implements CarDisplayI {
             if (done != null) done.V();
             return;
         }
-        
+
         gnd.showBarrier(2);
         cp.shutDownBegin();
-        //ctr.barrierShutDown();
         // Hold values for post-processing
         shutDownSem = done;
         shutDownThread = new ShutDownThread();

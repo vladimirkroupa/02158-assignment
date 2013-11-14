@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@link Alley} implementation using monitors that multiple cars going in the same direction.
@@ -9,7 +10,7 @@ public class MonitorAlley extends Alley {
 	
 	private int numAlleyDown = 0;
 	private int numAlleyUp = 0;
-	private HashSet<Integer> carsInAlley = new HashSet<Integer>();	
+	private Set<Integer> carsInAlley = new HashSet<Integer>();	
 	
 	public MonitorAlley(CarDisplayI cd) {
 		super(cd);

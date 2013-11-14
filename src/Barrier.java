@@ -1,3 +1,8 @@
+/**
+ * Abstract barrier that knows the positions of the cars in front of itself. 
+ * Intended to be used as a coordinating thread.
+ *
+ */
 public abstract class Barrier extends Thread {
 
 	static final int CARS_NO = 9;
@@ -20,24 +25,55 @@ public abstract class Barrier extends Thread {
 		barrierPositions[8] = new Pos(5, 11);		
 	}
 
-	public void checkBarrierPosition(int carNo, Pos curCarPos) {
+	/**
+	 * Signals the barrier that a car is trying to enter it. 
+	 * This is the only method that should be called from {@link CarControl}. 
+	 * 
+	 * @param carNo car number
+	 * @param curCarPos current position of the car
+	 */
+	public void checkBarrierPosition(int carNo, Pos curCarPos) throws InterruptedException {
 		if (isOn() && isInfrontOfBarrier(carNo, curCarPos)) {
 			arrive(carNo);
 		}
 	}
 	
+	/**
+	 * Checks if the car is located in front of the barrier.
+	 * 
+	 * @param carNo car number
+	 * @param curCarPos current position of the car
+	 * @return true if carNo is in front of the barrier
+	 */
 	protected boolean isInfrontOfBarrier(int carNo, Pos curCarPos) {
 		return barrierPositions[carNo].equals(curCarPos);
 	}
 
-	protected abstract void arrive(int carNo);
+	/**
+	 * Called when a car arrives at the barrier.
+	 * 
+	 * @param carNo number of the car.
+	 */
+	protected abstract void arrive(int carNo) throws InterruptedException;
 	
-	protected abstract boolean isOn();
+	/**
+	 * @return true if barrier should register incoming cars, false otherwise.
+	 */
+	protected abstract boolean isOn() throws InterruptedException;
+
+	/**
+	 * Turns barrier on.
+	 */
+	public abstract void turnOn() throws InterruptedException;
 	
-	public abstract void turnOn();
+	/**
+	 * Turns barrier off after this round is complete.
+	 */
+	public abstract void shutdown() throws InterruptedException;
 	
-	public abstract void shutdown();
-	
-	public abstract void turnOff();
+	/**
+	 * Turns barrier off immediately.
+	 */
+	public abstract void turnOff() throws InterruptedException;
 	
 }

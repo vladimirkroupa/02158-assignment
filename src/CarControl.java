@@ -261,7 +261,7 @@ public class CarControl implements CarControlI {
 		blueAlley = new MonitorAlley(cd);
 		//blueAlley = new SemaphoreAlley(cd);
 		// blueAlley.initBluePositions();
-		barrier = new MonitorBarrier();
+		barrier = new SemaphoreBarrier();
 		bridge = new Bridge();
 		
 		for (int row = 0; row < 11; row++) {
@@ -295,17 +295,29 @@ public class CarControl implements CarControlI {
 
 	public void barrierOn() {
 		cd.println("Barrier is ON");
-		barrier.turnOn();
+		try {
+			barrier.turnOn();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void barrierOff() {
 		cd.println("Barrier is OFF");
-		barrier.turnOff();
+		try {
+			barrier.turnOff();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void barrierShutDown() {
 		cd.println("Barrier shut down");
-		barrier.shutdown();
+		try {
+			barrier.shutdown();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		// This sleep is for illustrating how blocking affects the GUI
 		// Remove when shutdown is implemented.
 		try {

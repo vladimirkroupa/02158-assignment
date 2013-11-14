@@ -1,4 +1,7 @@
-
+/**
+ * Barrier implementation using single monitor. 
+ *
+ */
 public class MonitorBarrier extends Barrier {
 
 	private BarrierState state;
@@ -33,7 +36,6 @@ public class MonitorBarrier extends Barrier {
 		if (numberWaiting() < CARS_NO - 1) {			
 			try {
 				waiting[carNo] = true;
-				System.out.println(numberWaiting());
 				this.wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();

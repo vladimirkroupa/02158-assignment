@@ -2,8 +2,10 @@
 public class SemaphoreBarrier extends Barrier {
 
 	private BarrierState state;
+	private Semaphore stateSem = new Semaphore(1);
 	
 	private boolean[] waiting = new boolean[CARS_NO];
+	private Semaphore waitingSem = new Semaphore(1);
 	
 	private Semaphore[] proceed = new Semaphore[CARS_NO];
 	private Semaphore arrived;
@@ -29,15 +31,13 @@ public class SemaphoreBarrier extends Barrier {
 	}
 			
 	@Override
-	public void arrive(int carNo) {				
+	public void arrive(int carNo) throws InterruptedException {				
+		waitingSem.P();
 		waiting[carNo] = true;
+		waitingSem.V();
 		
 		arrived.V();
-		try {
-			proceed[carNo].P();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		proceed[carNo].P();
 	}
 
 	@Override
@@ -55,42 +55,58 @@ public class SemaphoreBarrier extends Barrier {
 		for (int i = 0; i < CARS_NO; i++) {
 			arrived.P();
 		}
+		waitingSem.P();
 		for (int i = 0; i < CARS_NO; i++) {
 			if (waiting[i]) {
 				waiting[i] = false;
 				proceed[i].V();
 			}
 		}
+		waitingSem.V();
 		
+		stateSem.P();
 		if (state == BarrierState.SHUTDOWN) {
 			state = BarrierState.OFF;
 		}
+		stateSem.V();
 	}
 
 	@Override
-	protected boolean isOn() {
-		return (state != BarrierState.OFF);
+	protected boolean isOn() throws InterruptedException {
+		stateSem.P();
+		boolean result = (state != BarrierState.OFF);
+		stateSem.V();
+		return result;
 	}
 
 	@Override
-	public void turnOn() {
+	public void turnOn() throws InterruptedException {
+		stateSem.P();
 		state = BarrierState.ON;
+		stateSem.V();
 	}
 	
 	@Override
-	public void shutdown() {
+	public void shutdown() throws InterruptedException {
+		stateSem.P();
 		if (state != BarrierState.OFF) { 
 			state = BarrierState.SHUTDOWN;
 		}
+		stateSem.V();
 	}
 	
-	public void turnOff() {		
+	public void turnOff() throws InterruptedException {		
+		stateSem.P();
 		state = BarrierState.OFF;
+		stateSem.V();
+		
+		waitingSem.P();
 		for (int i = 0; i < CARS_NO; i++) {
 			if (! waiting[i]) {
 				arrived.V();
 			}
 		}
+		waitingSem.V();
 	}
 
 	static enum BarrierState {

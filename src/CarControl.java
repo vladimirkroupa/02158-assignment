@@ -261,7 +261,7 @@ public class CarControl implements CarControlI {
 		blueAlley = new MonitorAlley(cd);
 		//blueAlley = new SemaphoreAlley(cd);
 		// blueAlley.initBluePositions();
-		barrier = new SemaphoreBarrier();
+		barrier = new MonitorBarrier();
 		bridge = new Bridge();
 		
 		for (int row = 0; row < 11; row++) {

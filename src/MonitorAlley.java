@@ -18,13 +18,13 @@ public class MonitorAlley extends Alley {
 
 	public synchronized void enter(int no) throws InterruptedException {
 		if (isGoingClockWise(no)) {
-			if (numAlleyDown > 0) {
+			while (numAlleyDown > 0) {
 				this.wait();
 			}
 			carsInAlley.add(no);
 			numAlleyUp++;
 		} else if (isGoingCounterClockWise(no)) {
-			if (numAlleyUp > 0) {
+			while (numAlleyUp > 0) {
 				this.wait();
 			}
 			carsInAlley.add(no);
@@ -33,7 +33,7 @@ public class MonitorAlley extends Alley {
 
 	}
 
-	public synchronized void leave(int no) throws InterruptedException {
+	public synchronized void leave(int no){
 		if (isGoingClockWise(no)) {
 			carsInAlley.remove(no);
 			numAlleyUp--;
@@ -49,7 +49,7 @@ public class MonitorAlley extends Alley {
 		}
 	}
 	
-	public synchronized void removeCar(int no) throws InterruptedException{
+	public synchronized void removeCar(int no){
 		if(carsInAlley.contains(no)){
 			leave(no);
 		}

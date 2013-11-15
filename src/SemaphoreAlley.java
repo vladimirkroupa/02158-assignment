@@ -1,20 +1,21 @@
 import java.util.HashSet;
 
 /**
- * Semaphore implementation of {@link Alley} that permits several cars going in the same direction at a time. 
- *  
+ * Semaphore implementation of {@link Alley} that permits several cars going in
+ * the same direction at a time.
+ * 
  */
 public class SemaphoreAlley extends Alley {
 
 	private int numAlleyDown;
 	private int numAlleyUp;
-	
+
 	private Semaphore sem = new Semaphore(1);
 
 	private Semaphore numAlleyDownSema = new Semaphore(1);
 	private Semaphore numAlleyUpSema = new Semaphore(1);
-	
-	private HashSet<Integer> carsInAlley = new HashSet<Integer>();		
+
+	private HashSet<Integer> carsInAlley = new HashSet<Integer>();
 
 	public SemaphoreAlley(CarDisplayI cd) {
 		super(cd);
@@ -33,7 +34,7 @@ public class SemaphoreAlley extends Alley {
 			numAlleyUpSema.V();
 
 		}
-		if (isGoingCounterClockWise(no)) {			
+		if (isGoingCounterClockWise(no)) {
 			numAlleyDownSema.P();
 			numAlleyDown++;
 			if (numAlleyDown == 1) {
@@ -45,30 +46,38 @@ public class SemaphoreAlley extends Alley {
 	}
 
 	@Override
-	public void leave(int no) throws InterruptedException {
+	public void leave(int no) {
 		if (isGoingClockWise(no)) {
-			numAlleyUpSema.P();
-			numAlleyUp--;
-			if (numAlleyUp == 0) {
-				sem.V();
+			try {
+				numAlleyUpSema.P();
+				numAlleyUp--;
+				if (numAlleyUp == 0) {
+					sem.V();
+				}
+				numAlleyUpSema.V();
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
 			}
-			numAlleyUpSema.V();
 		}
 		if (isGoingCounterClockWise(no)) {
-			numAlleyDownSema.P();
-			numAlleyDown--;
-			if (numAlleyDown == 0) {
-				sem.V();
+			try {
+				numAlleyDownSema.P();
+				numAlleyDown--;
+				if (numAlleyDown == 0) {
+					sem.V();
+				}
+				numAlleyDownSema.V();
+			} catch (InterruptedException ex) {
+				ex.printStackTrace();
 			}
-			numAlleyDownSema.V();
 		}
 		carsInAlley.remove(no);
 	}
-	
-	public void removeCar(int no) throws InterruptedException{
-		if(carsInAlley.contains(no)){
+
+	public void removeCar(int no) {
+		if (carsInAlley.contains(no)) {
 			leave(no);
 		}
 	}
-	
+
 }

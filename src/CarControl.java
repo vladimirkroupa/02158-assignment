@@ -197,11 +197,11 @@ class Car extends Thread {
 				// Move to new position
 				cd.clear(curpos);
 				cd.mark(curpos, newpos, col, no);
-				carDisplayState = carDisplayState.HALF_MOVING;
+				carDisplayState = CarDisplayState.HALF_MOVING;
 				sleep(speed());
 				cd.clear(curpos, newpos);
 				cd.mark(newpos, col, no);
-				carDisplayState = carDisplayState.MOVED;
+				carDisplayState = CarDisplayState.MOVED;
 
 				// remove the position semaphore
 				Semaphore curPosSema = posSemaMap.get(curpos);
@@ -357,6 +357,7 @@ public class CarControl implements CarControlI {
 		if (car[no] != null) {
 			car[no].interrupt();
 			car[no] = null;
+			cd.println("Removing car:"+no);
 		} else {
 			cd.println("Car has already been removed");
 		}
@@ -367,6 +368,7 @@ public class CarControl implements CarControlI {
 			car[no] = new Car(no, cd, gate[no], redAlley, blueAlley,
 					posSemaMap, barrier, bridge);
 			car[no].start();
+			cd.println("Restoring car:"+no);
 		} else {
 			cd.println("car has already been restored");
 		}

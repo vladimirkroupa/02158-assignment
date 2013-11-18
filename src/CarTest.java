@@ -141,6 +141,20 @@ public class CarTest extends Thread {
                 sleep(5000);
                 cars.stopAll();
                 break;
+                
+            case 8:
+                // Demonstration of removal/restore car1
+            	// and removal + immediate restoration of car2
+                cars.startAll();
+                cars.removeCar(1);   
+                sleep(5000);
+                cars.restoreCar(1);
+                sleep(5000);
+                cars.removeCar(2);
+                cars.restoreCar(2);
+                cars.stopAll();
+                break;
+                
 
             default:
                 cars.println("Test " + testno + " not available");

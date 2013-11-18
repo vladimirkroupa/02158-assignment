@@ -203,7 +203,6 @@ public class CarControl implements CarControlI {
 	Gate[] gate; // Gates
 	Alley alley;
 	Barrier barrier;
-	Bridge bridge;
 
 	Map<Pos, Semaphore> posSemaMap = new HashMap<Pos, Semaphore>();
 
@@ -281,7 +280,6 @@ public class CarControl implements CarControlI {
 	}
 
 	public void setLimit(int k) {
-		bridge.setLimit(k);
 	}
 
 	public void removeCar(int no) {

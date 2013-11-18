@@ -3,7 +3,7 @@ import java.util.HashSet;
 
 /**
  * {@link Alley} implementation using monitors that multiple cars going in the same direction.
- * Does not guarantee fairness!
+ * Guarantees fairness.
  *  
  */
 public class FairMonitorAlley extends Alley {

@@ -156,8 +156,7 @@ class Car extends Thread {
 
 				// Get the alley semaphore
 				if (alley.isAboutToEnter(no, curpos)) {
-					cd.println("Car " + no
-							+ " is about to enter the alley.");
+					cd.println("Car " + no + " is about to enter the alley.");
 					alley.enter(no);
 				}
 

@@ -14,31 +14,15 @@ public abstract class Alley {
 
 	protected CarDisplayI cd;
 	
-	/**
-	 * Predefined positions for "Red" alley.
-	 */
-	public void initRedPositions() {
+	Alley(CarDisplayI cd) {
+		this.cd = cd;
+		
 		addMapPosEntry(entries, new Pos(2, 1), 1, 2);
 		addMapPosEntry(entries, new Pos(1, 2), 3, 4);
 		addMapPosEntry(entries, new Pos(10, 0), 5, 6, 7, 8);
 		
 		addMapPosEntry(exits, new Pos(9, 1), 1, 2, 3, 4);
 		addMapPosEntry(exits, new Pos(1, 0), 5, 6, 7, 8);
-	}
-	
-	/**
-	 * Predefined positions for "Blue" alley.
-	 */
-	public void initBluePositions() {
-		addMapPosEntry(entries, new Pos(1, 1), 3, 4);
-		addMapPosEntry(entries, new Pos(1, 0), 5, 6, 7, 8);
-		
-		addMapPosEntry(exits, new Pos(1, 0), 3, 4);
-		addMapPosEntry(exits, new Pos(1, 1), 5, 6, 7, 8);
-	}
-	
-	Alley(CarDisplayI cd) {
-		this.cd = cd;
 	}
 
 	/**

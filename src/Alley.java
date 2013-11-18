@@ -73,13 +73,21 @@ public abstract class Alley {
 	}
 
 	/**
-	 * TODO javadoc
+	 * Called when the car enters the alley.
 	 * @param no number of the car
 	 */
 	public abstract void enter(int no) throws InterruptedException;
 
+	/**
+	 * Called when the car leaves the alley.
+	 * @param no number of the car
+	 */	
 	public abstract void leave(int no);
-	
+
+	/**
+	 * Called when the car is removed from the alley.
+	 * @param no number of the car
+	 */
 	public abstract void removeCar(int no);
 	
 	

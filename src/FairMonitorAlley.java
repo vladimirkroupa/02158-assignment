@@ -30,7 +30,7 @@ public class FairMonitorAlley extends Alley {
 		}
 	}
 	
-	public synchronized void leave(int no) throws InterruptedException {
+	public synchronized void leave(int no) {
 		if (isGoingClockWise(no)) {
 			leaveCW(no);
 		} else if (isGoingCounterClockWise(no)) {
@@ -80,7 +80,7 @@ public class FairMonitorAlley extends Alley {
 		passDirectionDiff--;
 	}
 	
-	private synchronized void leaveCW(int no) throws InterruptedException {
+	private synchronized void leaveCW(int no) {
 		carsInAlley.remove(no);
 		waitingCW = null;
 		numAlleyUp--;
@@ -89,7 +89,7 @@ public class FairMonitorAlley extends Alley {
 		}
 	}
 	
-	private synchronized void leaveCCW(int no) throws InterruptedException {
+	private synchronized void leaveCCW(int no){
 		carsInAlley.remove(no);		
 		waitingCCW = null;
 		numAlleyDown--;
@@ -98,7 +98,7 @@ public class FairMonitorAlley extends Alley {
 		}
 	}
 	
-	public synchronized void removeCar(int no) throws InterruptedException{
+	public synchronized void removeCar(int no){
 		if(carsInAlley.contains(no)){
 			leave(no);
 		}

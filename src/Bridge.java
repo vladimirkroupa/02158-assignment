@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ class Bridge {
 	private int numBridge = 0;
 	Map<Pos, List<Integer>> entries = new HashMap<>();
 	Map<Pos, List<Integer>> exits = new HashMap<>();
+	
+	HashSet<Integer> carsOnBridge = new HashSet<Integer>();
 
 	public Bridge() {
 		addMapPosEntry(entries, new Pos(9, 0), 1, 2, 3, 4);
@@ -18,17 +21,19 @@ class Bridge {
 		addMapPosEntry(exits, new Pos(10, 0), 5, 6, 7, 8);
 	}
 
-	public synchronized void enter() throws InterruptedException {
+	public synchronized void enter(int no) throws InterruptedException {
 		if (numBridge >= numBridgelimit) {
 			this.wait();
 			numBridge++;
 		} else {
 			numBridge++;
 		}
+		carsOnBridge.add(no);
 	}
 
-	public synchronized void leave() throws InterruptedException {
+	public synchronized void leave(int no){
 		numBridge--;
+		carsOnBridge.remove(no);
 		this.notify();
 	}
 
@@ -60,5 +65,11 @@ class Bridge {
 			carNoList.add(carNo);
 		}
 		map.put(pos, carNoList);
+	}
+	
+	public void removeCar(int no){
+		if(carsOnBridge.contains(no)){
+			leave(no);
+		}
 	}
 }

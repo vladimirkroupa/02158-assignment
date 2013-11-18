@@ -94,9 +94,9 @@ public abstract class Alley {
 	 */
 	public abstract void enter(int no) throws InterruptedException;
 
-	public abstract void leave(int no) throws InterruptedException;
+	public abstract void leave(int no);
 	
-	public abstract void removeCar(int no) throws InterruptedException;
+	public abstract void removeCar(int no);
 	
 	
 }

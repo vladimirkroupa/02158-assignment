@@ -74,11 +74,4 @@ public class SemaphoreAlley extends Alley {
 		carsInAlley.remove(no);
 	}
 
-	@Override
-	public void removeCar(int no) {
-		if (carsInAlley.contains(no)) {
-			leave(no);
-		}
-	}
-
 }

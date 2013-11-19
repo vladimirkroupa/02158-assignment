@@ -49,10 +49,6 @@ class Gate {
 }
 
 
-enum CarDisplayState {
-    INITIAL, HALF_MOVING, MOVED;
-}
-
 class Car extends Thread {
 
 	int basespeed = 100; // Rather: degree of slowness

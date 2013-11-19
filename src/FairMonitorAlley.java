@@ -1,5 +1,3 @@
-
-
 /**
  * {@link Alley} implementation using monitors that multiple cars going in the same direction.
  * Guarantees fairness.

@@ -1,4 +1,3 @@
-import java.util.HashSet;
 
 
 /**
@@ -16,7 +15,6 @@ public class FairMonitorAlley extends Alley {
 	private Integer passDirectionDiff = 0;
 	private Integer waitingCW = null;
 	private Integer waitingCCW = null;
-	private HashSet<Integer> carsInAlley = new HashSet<Integer>();
 	
 	public FairMonitorAlley(CarDisplayI cd) {
 		super(cd);
@@ -65,7 +63,6 @@ public class FairMonitorAlley extends Alley {
 			waitingCW = no;
 			this.wait();
 		}
-		carsInAlley.add(no);
 		numAlleyUp++;
 		passDirectionDiff++;
 	}
@@ -75,13 +72,11 @@ public class FairMonitorAlley extends Alley {
 			waitingCCW = no;
 			this.wait();
 		}
-		carsInAlley.add(no);
 		numAlleyDown++;
 		passDirectionDiff--;
 	}
 	
 	private synchronized void leaveCW(int no) {
-		carsInAlley.remove(no);
 		waitingCW = null;
 		numAlleyUp--;
 		if (numAlleyUp == 0) {
@@ -90,17 +85,10 @@ public class FairMonitorAlley extends Alley {
 	}
 	
 	private synchronized void leaveCCW(int no){
-		carsInAlley.remove(no);		
 		waitingCCW = null;
 		numAlleyDown--;
 		if (numAlleyDown == 0) {
 			this.notifyAll();			
-		}
-	}
-	
-	public synchronized void removeCar(int no){
-		if(carsInAlley.contains(no)){
-			leave(no);
 		}
 	}
 	

@@ -1,6 +1,3 @@
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * {@link Alley} implementation using monitors that multiple cars going in the same direction.
  * Does not guarantee fairness!

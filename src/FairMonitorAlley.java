@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -13,10 +14,11 @@ public class FairMonitorAlley extends Alley {
 
 	static final int PASS_DIFF_THRESHOLD = 4;
 	
-	private Integer passDirectionDiff = 0;
+	private int passDirectionDiff = 0;
 	private Integer waitingCW = null;
 	private Integer waitingCCW = null;
-	private HashSet<Integer> carsInAlley = new HashSet<Integer>();
+	
+	private Set<Integer> carsInAlley = new HashSet<Integer>();
 	
 	public FairMonitorAlley(CarDisplayI cd) {
 		super(cd);

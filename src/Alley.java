@@ -83,12 +83,5 @@ public abstract class Alley {
 	 * @param no number of the car
 	 */	
 	public abstract void leave(int no);
-
-	/**
-	 * Called when the car is removed from the alley.
-	 * @param no number of the car
-	 */
-	public abstract void removeCar(int no);
-	
 	
 }

@@ -1,4 +1,3 @@
-import java.util.HashSet;
 
 /**
  * Semaphore implementation of {@link Alley} that permits several cars going in
@@ -14,8 +13,6 @@ public class SemaphoreAlley extends Alley {
 
 	private Semaphore numAlleyDownSema = new Semaphore(1);
 	private Semaphore numAlleyUpSema = new Semaphore(1);
-
-	private HashSet<Integer> carsInAlley = new HashSet<Integer>();
 
 	public SemaphoreAlley(CarDisplayI cd) {
 		super(cd);
@@ -42,7 +39,6 @@ public class SemaphoreAlley extends Alley {
 			}
 			numAlleyDownSema.V();
 		}
-		carsInAlley.add(no);
 	}
 
 	@Override
@@ -71,7 +67,6 @@ public class SemaphoreAlley extends Alley {
 				ex.printStackTrace();
 			}
 		}
-		carsInAlley.remove(no);
 	}
 
 }
